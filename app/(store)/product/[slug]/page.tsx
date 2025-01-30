@@ -1,9 +1,13 @@
+import AddToBasketButton from '@/components/AddToBasketButton';  
 import { imageUrl } from '@/lib/imageUrl';
 import { getProductBySlug } from '@/sanity/lib/products/getProductBySlug';
 import { PortableText } from 'next-sanity';
 import Image from 'next/image';
 import { notFound } from 'next/navigation';
 import React from 'react'
+
+
+
 async function ProductPage({params}:
      { params: 
         Promise< { slug: string }>
@@ -62,6 +66,17 @@ async function ProductPage({params}:
                 </div>
 
             </div>
+
+
+            <div className="mt-6">
+                <AddToBasketButton product={product} disabled={isOutOfStock} />
+                
+              
+            </div>
+
+
+
+
         </div>
     </div>
     

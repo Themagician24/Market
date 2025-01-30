@@ -70,6 +70,8 @@ export default async function SearchPage({
         </h1>
 
         <ProductGrid products={Products}/>
+        
+
 
       </div>
      
