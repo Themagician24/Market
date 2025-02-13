@@ -8,6 +8,7 @@ import React from 'react'
     { params} : { params: Promise<{ slug: string}> }
  ) {
     const { slug } = await params;
+    
     // Fetch and display category details based on slug
     const products = await getProductsByCategory(slug);
     const categories = await getAllCategories();

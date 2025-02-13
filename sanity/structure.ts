@@ -9,7 +9,7 @@ export const structure: StructureResolver = (S) =>
       S.documentTypeListItem('category').title('Categories'),
      
       S.divider(),
-      S.documentTypeListItem('author').title('Authors'),
+       S.documentTypeListItem('author').title('Authors'),
       // S.documentTypeListItem('post').title('Posts'),
       ...S.documentTypeListItems().filter(
         (item) => item.getId() && !['post', 'category', 'author'].includes(item.getId()!),

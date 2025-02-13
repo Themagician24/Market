@@ -2,6 +2,7 @@
 
 
 import { client } from '@/sanity/lib/client';
+import useBasketStore from '@/store/store';
 import { ClerkLoaded, SignInButton, UserButton, useUser } from '@clerk/nextjs'
 import { PackageIcon, TrolleyIcon } from '@sanity/icons';
 
@@ -9,6 +10,8 @@ import { PackageIcon, TrolleyIcon } from '@sanity/icons';
  function header() {
     const { user } = useUser();
     // console.log(user);
+    const itemCount = useBasketStore((state) => 
+    state.items.reduce((total, item) => total + item.quantity, 0));
 
     const createClerkPasskey = async ()=> {
         try{
@@ -68,7 +71,7 @@ import { PackageIcon, TrolleyIcon } from '@sanity/icons';
         </form>
         <div className='flex items-center space-x-4 mt-4 sm:mt-0 flex-1 sm:flex-none'>
     <a 
-        href='/Basket' 
+        href='/basket' 
         className='
         flex-1 relative 
         flex justify-center 
@@ -84,6 +87,22 @@ import { PackageIcon, TrolleyIcon } from '@sanity/icons';
            px-4 rounded'
     >
         <TrolleyIcon className='w-6 h-6'/>
+
+        <span className="
+        absolute
+         -top-2 
+         -right-2
+          bg-red-500
+           text-white
+            rounded-full
+             w-5
+              h-5
+               flex
+                items-center
+                 justify-center
+                  text-hs">
+                    {itemCount}
+                  </span>
         <span>My Basket</span>
     </a>
     <ClerkLoaded>
