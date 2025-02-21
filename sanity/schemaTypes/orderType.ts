@@ -1,15 +1,14 @@
 import { BasketIcon } from "@sanity/icons";
-import { Rule } from "postcss";
 import { defineArrayMember, defineField, defineType } from "sanity";
 
-export const orderType=defineType({
+export const orderType = defineType({
     name: "order",
     title: "Order",
     type: "document",
     icon: BasketIcon,
     fields: [
         defineField({
-            name:"orderNumber",
+            name: "orderNumber",
             title: "Order Number",
             type: "string",
             validation: (Rule) => Rule.required(),
@@ -18,119 +17,133 @@ export const orderType=defineType({
             name: "stripeCheckoutSessionId",
             title: "Checkout Session ID",
             type: "string",
-            
         }),
         defineField({
-            name:"stripeCustomerId",
+            name: "stripeCustomerId",
             title: "Customer ID",
             type: "string",
             validation: (Rule) => Rule.required(),
         }),
         defineField({
-            name:"stripePaymentIntentId",
+            name: "stripePaymentIntentId",
             title: "Stripe Payment Intent ID",
             type: "string",
             validation: (Rule) => Rule.required(),
         }),
         defineField({
-            name:"products",
+            name: "customerName",
+            title: "Customer Name",
+            type: "string",
+            validation: (Rule) => Rule.required(),
+        }),
+        defineField({
+            name: "clerkUserId",
+            title: "Clerk User ID",
+            type: "string",
+        }),
+        defineField({
+            name: "email",
+            title: "Customer Email",
+            type: "string",
+            validation: (Rule) => Rule.required().email(),
+        }),
+        defineField({
+            name: "products",
             title: "Products",
             type: "array",
             of: [
                 defineArrayMember({
-                    type:"object",
-                    fields:[
+                    type: "object",
+                    fields: [
                         defineField({
-                            name:"product",
+                            name: "product",
                             title: "Product Bought",
                             type: "reference",
-                            to: [{type:"product"}],
+                            to: [{ type: "product" }],
                         }),
                         defineField({
-                            name:"quantity",
+                            name: "quantity",
                             title: "Quantity Purchased",
                             type: "number",
-                            
+                            validation: (Rule) => Rule.min(1),
                         }),
                     ],
                     preview: {
                         select: {
-                            product: "Product.name",
-                            quantity: "product",
-                            image:"product.image",
+                            productName: "product.name",
+                            quantity: "quantity",
+                            image: "product.image",
                             price: "product.price",
                             currency: "product.currency",
                         },
                         prepare: (select) => {
-                            return{
-                                title: ` ${select.product} - ${select.product} x ${select.quantity}`,
-                                subtitle:`${select.price* select.quantity}`,
+                            return {
+                                title: `${select.productName} x ${select.quantity}`,
+                                subtitle: `Total: ${select.price * select.quantity} ${select.currency}`,
                                 media: select.image,
                             };
                         },
                     },
-                        
                 }),
             ],
-            
         }),
         defineField({
-            name:"totalPrice",
+            name: "totalPrice",
             title: "Total Price",
             type: "number",
             validation: (Rule) => Rule.required().min(0),
         }),
         defineField({
-            name:"currency",
+            name: "currency",
             title: "Currency",
             type: "string",
             validation: (Rule) => Rule.required(),
         }),
         defineField({
-            name:"amountDiscount",
+            name: "amountDiscount",
             title: "Amount Discount",
             type: "number",
             validation: (Rule) => Rule.min(0),
         }),
         defineField({
-            name:"status",
+            name: "status",
             title: "Order Status",
             type: "string",
             options: {
                 list: [
-                    {title: "Pending", value: "pending"},
-                    {title: "Paid", value: "paid"},
-                    {title: "Processing", value: "processing"},
-                    {title: "Shipped", value: "shipped"},
-                    {title: "Delivered", value: "delivered"},
-                    {title: "Cancelled", value: "cancelled"},
+                    { title: "Pending", value: "pending" },
+                    { title: "Paid", value: "paid" },
+                    { title: "Processing", value: "processing" },
+                    { title: "Shipped", value: "shipped" },
+                    { title: "Delivered", value: "delivered" },
+                    { title: "Cancelled", value: "cancelled" },
                 ],
             },
-                
         }),
         defineField({
-            name:"orderDate",
+            name: "orderDate",
             title: "Order Date",
             type: "datetime",
             validation: (Rule) => Rule.required(),
-        })
+        }),
     ],
     preview: {
         select: {
-            name: "CustomerName",
-            amount:"totalPrice",
-            currency:"currency",
-            orderId:"orderNumber",
-            email:"email",
+            name: "customerName",
+            amount: "totalPrice",
+            currency: "currency",
+            orderId: "orderNumber",
+            email: "email",
         },
-        prepare(select)  {
-            const orderIdSnippet = `${select.orderId.slice(0, 5)}...${select.orderId.slice(-5)}`;
-            return{
-                title:`${select.name} (${orderIdSnippet})`,
-                subtitle:`Total: ${select.amount} ${select.currency}, ${select.email}`,
+        prepare(select) {
+            const orderIdSnippet = select.orderId
+                ? `${select.orderId.slice(0, 5)}...${select.orderId.slice(-5)}`
+                : "N/A";
+            return {
+                title: `${select.name} (${orderIdSnippet})`,
+                subtitle: `Total: ${select.amount} ${select.currency} - ${select.email}`,
                 media: BasketIcon,
             };
         },
     },
-        
 });

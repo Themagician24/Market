@@ -19,7 +19,7 @@ export type GroupedBasketItem = {
 
 
 export async function createCheckoutSession(
-    items: BasketItem[],
+    items: GroupedBasketItem[],
     metadata: Metadata
 ) {
     try {
@@ -45,6 +45,18 @@ export async function createCheckoutSession(
 
         }
 
+        const baseUrl = process.env.NODE_ENV === "production"
+         ? `https://${process.env.VERCEL_URL}` 
+        : `${process.env.NEXT_PUBLIC_BASE_URL}`;
+
+        const successUrl = `${baseUrl}/success?session_id={CHECKOUT_SESSION_ID}&orderNumber=${metadata.orderNumber}`;
+
+        const cancelUrl = `${baseUrl}/basket`;
+
+
+
+
+
     const session = await stripe.checkout.sessions.create({
         customer: customerId,
         customer_creation: customerId ? undefined : "always",
@@ -52,9 +64,8 @@ export async function createCheckoutSession(
         metadata,
         mode: "payment",
         allow_promotion_codes: true,
-        success_url: `${`https://${process.env.VERSEL_URL}` || 
-        process.env.NEXT_PUBLIC_BASE_URL}/success?session_id={CHECKOUT_SESSION_ID}&orderNumber=${metadata.orderNumber}`,
-        cancel_url: `${`https://${process.env.VERCEL_URL}` || process.env.NEXT_PUBLIC_BASE_URL}/basket`,
+        success_url: successUrl,
+        cancel_url:cancelUrl,
         line_items: items.map((item) => ({
             // price: item.product.price?.toString(),
             price_data: {
